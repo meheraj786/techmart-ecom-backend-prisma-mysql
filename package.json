@@ -1,5 +1,5 @@
 {
-  "name": "backend-template(prismamysql)",
+  "name": "techmart-backend-mysql-prisma",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

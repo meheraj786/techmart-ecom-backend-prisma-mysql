@@ -11,7 +11,6 @@ const app = express();
     app.use(express.json());
     app.use(cors());
     app.use(routes);
-
     app.listen(process.env.PORT, () => console.log("Server Is Running"));
   } catch (error) {
     console.log("Something Went Wrong", error);
