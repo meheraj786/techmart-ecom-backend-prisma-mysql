@@ -1,8 +1,11 @@
 const express = require("express");
 const { verifyOtp } = require("../../controllers/verifyOtp.controller");
+const { createUser } = require("../../controllers/user.controller");
+const { resendOtp } = require("../../controllers/resendOtp.controller");
 const userRoute = express.Router();
 
-userRoute.post("/registration", (req,res)=>res.send("working") )
+userRoute.post("/registration", createUser)
 userRoute.post("/verify-otp", verifyOtp )
+userRoute.post("/resend-otp", resendOtp )
 
 module.exports = userRoute;

@@ -1,4 +1,7 @@
-export const verifyOtp = async (req, res) => {
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
+exports.verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
@@ -21,7 +24,6 @@ export const verifyOtp = async (req, res) => {
         otpExpire: null,
       },
     });
-
     res.json({ message: "Email verified successfully", data: updatedUser });
   } catch (error) {
     console.error(error);

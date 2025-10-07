@@ -1,7 +1,8 @@
-const prisma = require("../prisma/middleware/categorySubUpdate");
 const bcrypt = require("bcrypt");
 const otpGenerator = require("otp-generator");
 const { sendMail } = require("../utils/sendMail");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 exports.createUser = async (req, res) => {
   try {
@@ -12,7 +13,9 @@ exports.createUser = async (req, res) => {
     }
 
     if (name.length < 2) {
-      return res.status(400).json({ error: "Name must be at least 2 characters" });
+      return res
+        .status(400)
+        .json({ error: "Name must be at least 2 characters" });
     }
 
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -23,7 +26,8 @@ exports.createUser = async (req, res) => {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
-        error: "Password must be at least 6 characters and contain letters & numbers",
+        error:
+          "Password must be at least 6 characters and contain letters & numbers",
       });
     }
 
@@ -47,7 +51,7 @@ exports.createUser = async (req, res) => {
         password: hashedPassword,
         emailVerify: false,
         otp,
-        otpExpire: new Date(Date.now() + 10 * 60 * 1000), 
+        otpExpire: new Date(Date.now() + 10 * 60 * 1000),
       },
     });
 
@@ -58,7 +62,7 @@ exports.createUser = async (req, res) => {
       data: newUser,
     });
   } catch (error) {
-    console.error("❌ Error in createUser:", error);
+    console.error("Error in createUser:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
