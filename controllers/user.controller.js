@@ -3,6 +3,7 @@ const otpGenerator = require("otp-generator");
 const { sendMail } = require("../utils/sendMail");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const jwt=require("jsonwebtoken")
 
 exports.createUser = async (req, res) => {
   try {
@@ -66,3 +67,50 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    if (!existingUser.emailVerify) {
+      return res.status(400).json({ message: "Email is not verified" });
+    }
+
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Password does not match" });
+    }
+
+    const token = jwt.sign(
+      { email: existingUser.email, id: existingUser.id },
+      process.env.SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      data: existingUser,
+      token,
+    });
+  } catch (error) {
+    console.error("Error in loginUser:", error);
+    res.status(500).json({ message: "Server error" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
