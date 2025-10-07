@@ -1,4 +1,7 @@
-const express=require("express")
-const apiRoutes=express.Router()
+const express = require("express");
+const userRoute = require("./user");
+const apiRoutes = express.Router();
 
-module.exports=apiRoutes
+apiRoutes.use("/user",userRoute)
+
+module.exports = apiRoutes;
